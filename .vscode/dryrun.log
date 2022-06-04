@@ -1,0 +1,8 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/donening/Workspace/copied_sysy'
+flex --noyywrap -o src/lexer.cpp src/lexer.l
+bison -o src/parser.cpp --defines=src/parser.h -v src/parser.y
+g++ -x c++-header -o src/pch.h.gch -c src/pch.h
+g++ -Wall -Wextra -std=c++11 -g ./src/main.cpp ./src/tree.cpp ./src/type.cpp -o ./main.out
+make: Leaving directory '/home/donening/Workspace/copied_sysy'
+ 
