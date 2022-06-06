@@ -6,8 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
- 
-# Make data base, printed on Mon Jun  6 08:58:59 2022
+# Make data base, printed on Mon Jun  6 11:22:28 2022
 
 # Variables
 
@@ -142,7 +141,7 @@ XDG_RUNTIME_DIR = /mnt/wslg/runtime-dir
 # makefile (from 'Makefile', line 2)
 CFLAGS := -Wall -Wextra -std=c++11 -g
 # environment
-VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-dee84749-c63e-4db9-aa02-982acc4a0cf9.sock
+VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-c370ef7c-08a0-4623-bc1f-c1e85c512abf.sock
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -172,9 +171,9 @@ CC := g++
 
 # Directories
 
-# . (device 2080, inode 147752): 8 files, no impossibilities.
+# . (device 2080, inode 147752): 9 files, no impossibilities.
 
-# 8 files, no impossibilities in 1 directories.
+# 9 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -234,7 +233,6 @@ clean:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
- 
 #  recipe to execute (from 'Makefile', line 24):
 	rm -f src/lexer.cpp src/parser.cpp src/parser.h src/pch.h.gch $(TARGET) *.o ./bin/*
 	rm -f src/*.output
@@ -278,6 +276,7 @@ all: complier
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # variable set hash-table stats:
+ 
 # Load=0/32=0%, Rehash=0, Collisions=0/3=0%
 
 run:
@@ -365,12 +364,12 @@ mytest:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 32 / storage = 228 B / avg = 7 B
-# current buf: size = 8162 B / used = 228 B / count = 32 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 33 / storage = 239 B / avg = 7 B
+# current buf: size = 8162 B / used = 239 B / count = 33 / avg = 7 B
 
-# strcache performance: lookups = 56 / hit rate = 42%
+# strcache performance: lookups = 57 / hit rate = 42%
 # hash-table stats:
-# Load=32/8192=0%, Rehash=0, Collisions=0/56=0%
-# Finished Make data base on Mon Jun  6 08:58:59 2022
+# Load=33/8192=0%, Rehash=0, Collisions=0/57=0%
+# Finished Make data base on Mon Jun  6 11:22:28 2022
 
  
