@@ -20,58 +20,6 @@ main: src/pch.h.gch
 
 complier: lex yacc main
 
-run: complier
-	./test.out
-
-l1:
-	./test.out --level 1
-
-l2:
-	./test.out --level 2
-
-l3:
-	./test.out --level 3
-
-l4:
-	./test.out --level 4
-
-diffcheck:
-	./test.out --diffcheck
-	
-noerrlog:
-	./test.out --nolog
-
-type:
-	./test.out --type
-
-asm:
-	gcc -S asmTest.c -m32 -o asmTest.s
-
-asmc:
-	gcc asmTest.s -m32 -o asmTest.out
-	qemu-i386 asmTest.out
-
-st: 
-	./main.out test/4/02_path.c > asmTest.s
-	gcc asmTest.s -m32 -o asmTest.out
-	qemu-i386 asmTest.out
-
-std:
-	for file in $(basename $(shell find test/?/*.c)); \
-	do \
-		touch -a $$file.in; \
-	done
-
-different:
-	for file in $(basename $(shell find test/?/*.c)); \
-	do \
-		cp -u $$file.c $$file.sy; \
-	done
-
 clean:
 	rm -f src/lexer.cpp src/parser.cpp src/parser.h src/pch.h.gch $(TARGET) *.o ./bin/*
 	rm -f src/*.output
-	rm -rf test/*/*.out test/*/*.output
-
-clean-complete:clean
-	rm -rf test/*/*.s test/*/*.res test/*/*.sy test/*/*.output

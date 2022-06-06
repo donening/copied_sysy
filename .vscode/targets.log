@@ -6,7 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Jun  4 18:09:54 2022
+ 
+# Make data base, printed on Mon Jun  6 08:58:59 2022
 
 # Variables
 
@@ -55,7 +56,7 @@ CURDIR := /home/donening/Workspace/copied_sysy
 # environment
 VSCODE_PIPE_LOGGING = true
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
@@ -115,7 +116,7 @@ LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 # environment
 LESS = -R
 # environment
-WSL_INTEROP = /run/WSL/3638_interop
+WSL_INTEROP = /run/WSL/11_interop
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
@@ -141,7 +142,7 @@ XDG_RUNTIME_DIR = /mnt/wslg/runtime-dir
 # makefile (from 'Makefile', line 2)
 CFLAGS := -Wall -Wextra -std=c++11 -g
 # environment
-VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-41dd178b-091f-4900-914c-04e74d11eb40.sock
+VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-dee84749-c63e-4db9-aa02-982acc4a0cf9.sock
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -171,9 +172,9 @@ CC := g++
 
 # Directories
 
-# . (device 2080, inode 147752): 10 files, no impossibilities.
+# . (device 2080, inode 147752): 8 files, no impossibilities.
 
-# 10 files, no impossibilities in 1 directories.
+# 8 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -186,13 +187,6 @@ src/pch.h:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-
-l1:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 27):
-	./test.out --level 1
 
 yacc:
 #  Phony target (prerequisite of .PHONY).
@@ -207,9 +201,6 @@ asmc:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 51):
-	gcc asmTest.s -m32 -o asmTest.out
-	qemu-i386 asmTest.out
 
 debug:
 #  Phony target (prerequisite of .PHONY).
@@ -220,16 +211,9 @@ debug:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-04 18:03:55.6336067
+#  Last modified 2022-06-06 08:58:43.3250045
 #  File has been updated.
 #  Successfully updated.
-
-type:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 45):
-	./test.out --type
 
 testscope:
 #  Phony target (prerequisite of .PHONY).
@@ -245,25 +229,15 @@ complier: lex yacc main
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/3=0%
 
-different:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 66):
-	for file in $(basename $(shell find test/?/*.c)); \
-	do \
-		cp -u $$file.c $$file.sy; \
-	done
-
 clean:
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 72):
+ 
+#  recipe to execute (from 'Makefile', line 24):
 	rm -f src/lexer.cpp src/parser.cpp src/parser.h src/pch.h.gch $(TARGET) *.o ./bin/*
 	rm -f src/*.output
-	rm -rf test/*/*.out test/*/*.output
 
 example-code:
 #  Phony target (prerequisite of .PHONY).
@@ -276,43 +250,13 @@ src/pch.h.gch: src/pch.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 10):
- 
 	g++ -x c++-header -o src/pch.h.gch -c src/pch.h
-
-diffcheck:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 39):
-	./test.out --diffcheck
-	
-
-l4:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 36):
-	./test.out --level 4
-
-l2:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 30):
-	./test.out --level 2
 
 out:
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-
-noerrlog:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 42):
-	./test.out --nolog
 
 # Not a target:
 .DEFAULT:
@@ -325,8 +269,6 @@ asm:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 48):
-	gcc -S asmTest.c -m32 -o asmTest.s
 
 all: complier
 #  Phony target (prerequisite of .PHONY).
@@ -338,28 +280,17 @@ all: complier
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/3=0%
 
-run: complier
+run:
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 24):
-	./test.out
 
 link:
 #  Phony target (prerequisite of .PHONY).
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-
-st:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 55):
-	./main.out test/4/02_path.c > asmTest.s
-	gcc asmTest.s -m32 -o asmTest.out
-	qemu-i386 asmTest.out
 
 main: src/pch.h.gch
 #  Phony target (prerequisite of .PHONY).
@@ -374,23 +305,6 @@ test:
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
-
-std:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 60):
-	for file in $(basename $(shell find test/?/*.c)); \
-	do \
-		touch -a $$file.in; \
-	done
-
-clean-complete: clean
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 77):
-	rm -rf test/*/*.s test/*/*.res test/*/*.sy test/*/*.output
 
 nasm:
 #  Phony target (prerequisite of .PHONY).
@@ -443,27 +357,20 @@ mytest:
 #  File does not exist.
 #  File has not been updated.
 
-l3:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-#  recipe to execute (from 'Makefile', line 33):
-	./test.out --level 3
-
 # files hash-table stats:
-# Load=34/1024=3%, Rehash=0, Collisions=3/78=4%
+# Load=23/1024=2%, Rehash=0, Collisions=2/62=3%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 44 / storage = 309 B / avg = 7 B
-# current buf: size = 8162 B / used = 309 B / count = 44 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 32 / storage = 228 B / avg = 7 B
+# current buf: size = 8162 B / used = 228 B / count = 32 / avg = 7 B
 
-# strcache performance: lookups = 88 / hit rate = 50%
+# strcache performance: lookups = 56 / hit rate = 42%
 # hash-table stats:
-# Load=44/8192=1%, Rehash=0, Collisions=0/88=0%
-# Finished Make data base on Sat Jun  4 18:09:54 2022
+# Load=32/8192=0%, Rehash=0, Collisions=0/56=0%
+# Finished Make data base on Mon Jun  6 08:58:59 2022
 
  
