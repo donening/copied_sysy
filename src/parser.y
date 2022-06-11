@@ -28,7 +28,7 @@
 %}
 
 // 类型
-%token T_CHAR T_INT T_STRING T_BOOL T_VOID
+%token T_CHAR T_INT T_VOID
 
 // 取地址运算符
 %token ADDR;
@@ -49,7 +49,7 @@
 %token PLUS MINUS MUL DIV MOD AND OR NOT INC DEC
 
 // 特殊单词
-%token IDENTIFIER INTEGER CHAR BOOL STRING
+%token IDENTIFIER INTEGER 
 
 %left EQ
 
@@ -66,16 +66,11 @@ program
 
 basicType
 : T_INT {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_INT;}
-| T_CHAR {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_CHAR;}
-| T_BOOL {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_BOOL;}
 | T_VOID {$$ = new TreeNode(lineno, NODE_TYPE); $$->type = TYPE_VOID;}
 ;
 
 literalConst
 : INTEGER {$$ = new TreeNode(lineno, NODE_EXPR); $$->addChild($1);}
-| BOOL {$$ = new TreeNode(lineno, NODE_EXPR); $$->addChild($1);}
-| CHAR {$$ = new TreeNode(lineno, NODE_EXPR); $$->addChild($1);}
-| STRING {$$ = new TreeNode(lineno, NODE_EXPR); $$->addChild($1);}
 ;
 
 // ------ 复合标识符，包含指针与数组，在变量声明外使用 -----
@@ -239,47 +234,10 @@ declIdentifier
 }
 ;
 
-// ---------------- 常变量声明 -------------------
+// ---------------- 变量声明 -------------------
 
 decl
-: constDecl {$$ = $1;}
-| varDecl {$$ = $1;}
-;
-
-constDecl
-: CONST basicType constDefs SEMICOLON {
-  $$ = new TreeNode(lineno, NODE_STMT);
-  $$->stype = STMT_CONSTDECL;
-  $$->type = TYPE_NONE;
-  $$->addChild($2);
-  $$->addChild($3);  
-  TreeNode* p = $3->child;
-  while(p != nullptr) {
-	  p->child->type->copy($2->type);
-	  p->child->type->constvar = true;
-	  p = p->sibling;
-  }
-};
-
-// 连续常量定义
-constDefs
-: constDef {$$ = new TreeNode(lineno, NODE_VARLIST); $$->addChild($1);}
-| constDefs COMMA constDef {$$ = $1; $$->addChild($3);}
-;
-
-constDef
-: pDeclIdentifier ASSIGN literalConst {
-	$$ = new TreeNode(lineno, NODE_OP); 
-	$$->optype = OP_DECLASSIGN;
-	$$->addChild($1); 
-	$$->addChild($3);
-  }
-| arrayDeclIdentifier ASSIGN LBRACE ArrayInitVal RBRACE {
-	$$ = new TreeNode(lineno, NODE_OP);
-	$$->optype = OP_DECLASSIGN;
-	$$->addChild($1); 
-	$$->addChild($4);
-  }
+: varDecl {$$ = $1;}
 ;
 
 // 数组初始化值
