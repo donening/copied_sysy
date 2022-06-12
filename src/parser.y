@@ -16,6 +16,8 @@
 	extern multimap<string, string> idNameList;
 	// map <<标识符名称， 作用域>, 结点指针> 变量列表
 	extern map<pair<string, string>, TreeNode*> idList;
+    // map<函数名， 返回类型> 函数名列表
+    extern map<string, Type*> FuncList;
 
 	// 用于检查continue和break是否在循环内部
 	bool inCycle = false;
@@ -305,6 +307,7 @@ funcDef
 		$2->type->paramNum++;
 		param = param->sibling;
 	}
+    FuncList[$2->var_name] = $1->type;
 	$2->type->retType = $1->type;
 	$$->addChild($1);
 	$$->addChild($2);
@@ -322,6 +325,7 @@ funcDef
 	$$->stype = STMT_FUNCDECL;
 	$2->type->type = COMPOSE_FUNCTION;
 	$2->type->retType = $1->type;
+    FuncList[$2->var_name] = $1->type;
 	$$->addChild($1);
 	$$->addChild($2);
 	$$->addChild(new TreeNode(lineno, NODE_VARLIST));

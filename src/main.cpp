@@ -19,19 +19,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    InitIOFunctionNode();
     yyparse();
 
     if (parserError)
         return 0;
         
     root->genNodeId();
-#ifdef AST
-    cout << "# -------------------------" << endl;
-    root->printAST();
-    cout << "# -------------------------" << endl;
-#endif
-    root->typeCheck();
 
     if (typeError)
         return 0;

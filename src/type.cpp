@@ -34,14 +34,8 @@ string Type::getTypeInfo() {
 
 string Type::getTypeInfo(ValueType type) {
     switch(type) {
-        case VALUE_BOOL:
-            return "bool";
         case VALUE_INT:
             return "int";
-        case VALUE_CHAR:
-            return "char";
-        case VALUE_STRING:
-            return "string";
         case VALUE_ARRAY:
             if (this->dim > 0) {
                 string buf = getTypeInfo(this->elementType);
@@ -73,10 +67,7 @@ int Type::getSize() {
     int eleSize;
     switch (type)
     {
-    case VALUE_BOOL:
     case VALUE_INT:
-    case VALUE_CHAR:
-    case VALUE_STRING:
         return 4;
     case VALUE_ARRAY:
         eleSize = 4;
