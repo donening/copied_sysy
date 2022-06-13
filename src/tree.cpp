@@ -30,8 +30,9 @@ multimap<string, string> idNameList;
 // map <<标识符名称， 作用域>, 结点指针> 变量列表
 map<pair<string, string>, TreeNode *> idList;
 
-// map<函数名， 返回类型> 函数名列表
-map<string, Type*> FuncList;
+// map <函数名， 返回类型> 函数名列表
+map<string, Type *> FuncList;
+// stack <函数类> 当前所在函数对应的函数类，临时变量标号等以函数为单位生成
 
 // map <字符串， 标签序列号> 字符串表
 map<string, int> strList;
@@ -151,9 +152,9 @@ void TreeNode::genCode()
         }
         break;
     case NODE_FUNCALL:
-        cout<<"call ";
-        // 生成参数
+    { // 生成参数
         N = p->sibling->getChildNum();
+        auto tmp_var_lists = new vector<string>(N);
 #ifdef childNumdebug
         cout << "# ChildNum = " << N << endl;
 #endif
@@ -171,14 +172,15 @@ void TreeNode::genCode()
             cout << "\tpushl\t%eax" << endl;
             pSize += this->child->type->paramType[i]->getSize();
         }
-        // call和参数栈清理
-        cout << "\tcall\t" << child->var_name << endl
-             << "\taddl\t$" << pSize << ", %esp" << endl;
-        break;
+        auto it = FuncList.find(child->var_name);
+        cout << "call " << it->second->getTypeInfo() << " @" << it->first;
+    }
+    break;
     case NODE_STMT:
         switch (stype)
         {
         case STMT_FUNCDECL:
+        {
             cycleStackTop = -1;
             pFunction = this;
             get_label();
@@ -199,7 +201,8 @@ void TreeNode::genCode()
             cout << "\tpopl\t%ebp" << endl
                  << "\tret" << endl;
             pFunction = nullptr;
-            break;
+        }
+        break;
         case STMT_DECL:
         case STMT_CONSTDECL:
             p = p->sibling->child;
@@ -228,7 +231,7 @@ void TreeNode::genCode()
             this->child->genCode();
             cout << label.true_label << ":" << endl;
             this->child->sibling->genCode();
-            cout << "\tjmp\t\t" << label.next_label << endl;
+            cout << "\tbr\t\t" << label.next_label << endl;
             cout << label.false_label << ":" << endl;
             this->child->sibling->sibling->genCode();
             cout << label.next_label << ":" << endl;
@@ -240,7 +243,7 @@ void TreeNode::genCode()
             this->child->genCode();
             cout << label.true_label << ":" << endl;
             this->child->sibling->genCode();
-            cout << "\tjmp\t\t" << label.next_label << endl;
+            cout << "\tbr\t\t" << label.next_label << endl;
             cout << label.false_label << ":" << endl;
             cycleStackTop--;
             break;
@@ -254,22 +257,22 @@ void TreeNode::genCode()
             this->child->sibling->sibling->sibling->genCode();
             cout << label.next_label << ":" << endl;
             this->child->sibling->sibling->genCode();
-            cout << "\tjmp\t\t" << label.begin_label << endl;
+            cout << "\tbr\t\t" << label.begin_label << endl;
             cout << label.false_label << ":" << endl;
             cycleStackTop--;
             break;
         case STMT_BREAK:
-            cout << "\tjmp\t\t" << cycleStack[cycleStackTop]->label.false_label << endl;
+            cout << "\tbr\t\t" << cycleStack[cycleStackTop]->label.false_label << endl;
             break;
         case STMT_CONTINUE:
-            cout << "\tjmp\t\t" << cycleStack[cycleStackTop]->label.next_label << endl;
+            cout << "\tbr\t\t" << cycleStack[cycleStackTop]->label.next_label << endl;
             break;
         case STMT_RETURN:
             if (p)
             {
                 p->genCode();
             }
-            cout << "\tjmp\t\t" << pFunction->label.next_label << endl;
+            cout << "\tbr\t\t" << pFunction->label.next_label << endl;
             break;
         case STMT_BLOCK:
             while (p)
@@ -325,7 +328,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tje\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_NEQ:
@@ -338,7 +341,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tjne\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_GRA:
@@ -351,7 +354,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tjg\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_LES:
@@ -364,7 +367,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tjl\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_GRAEQ:
@@ -377,7 +380,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tjge\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_LESEQ:
@@ -390,7 +393,7 @@ void TreeNode::genCode()
             if (label.true_label != "")
             {
                 cout << "\tjle\t\t" << label.true_label << endl
-                     << "\tjmp\t\t" << label.false_label << endl;
+                     << "\tbr\t\t" << label.false_label << endl;
             }
             break;
         case OP_NOT:
@@ -552,61 +555,18 @@ void TreeNode::gen_var_decl()
                 // q为变量表语句，可能为标识符或者赋值声明运算符
                 while (q)
                 {
-                    if (!print_data)
-                    {
-                        // 第一次遇到全局变量的时候输出
-                        print_data = true;
-                        cout << "\t.text" << endl
-                             << "\t.data" << endl
-                             << "\t.align\t4" << endl;
-                    }
                     TreeNode *t = q;
                     if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN)
                     {
                         t = q->child;
                     }
-                    // 遍历常变量列表，指针类型视为4字节int
-                    int varsize = ((t->type->pointLevel == 0) ? t->type->getSize() : 4);
-                    if (t->type->dim > 0)
+                    cout << "declare i32 @" << t->var_name;
+                    if (t->type->dim != 0)
                     {
-                        t->type->elementType = p->child->type->type;
-                        t->type->type = VALUE_ARRAY;
-                        varsize = t->type->getSize();
+                        for (unsigned int i = 0; i < t->type->dim; i++)
+                            cout << "[" << t->type->dimSize[i] << "]";
                     }
-                    cout << "\t.globl\t" << t->var_name << endl
-                         << "\t.type\t" << t->var_name << ", @object" << endl
-                         << "\t.size\t" << t->var_name << ", " << varsize << endl
-                         << t->var_name << ":" << endl;
-                    if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN)
-                    {
-                        // 声明时赋值
-                        // 只处理字面量初始化值
-                        if (t->type->dim == 0)
-                        { // 单个值
-                            cout << "\t.long\t" << t->sibling->getVal() << endl;
-                        }
-                        else
-                        { // 数组
-                            for (TreeNode *pe = t->sibling->child; pe != nullptr; pe = pe->sibling)
-                                cout << "\t.long\t" << 4 * pe->getVal() << endl;
-                        }
-                    }
-                    else
-                    {
-                        // 声明时未赋值，默认初始化值为0
-                        // 只处理字面量初始化值
-                        if (t->type->dim == 0)
-                        { // 单个值
-                            cout << "\t.long\t0" << endl;
-                        }
-                        else
-                        { // 数组
-                            int size = 1;
-                            for (unsigned int i = 0; i < t->type->dim; i++)
-                                size *= t->type->dimSize[i];
-                            cout << "\t.zero\t" << size << endl;
-                        }
-                    }
+                    cout << endl;
                     q = q->sibling;
                 }
             }

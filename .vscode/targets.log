@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Jun 12 14:37:01 2022
+# Make data base, printed on Mon Jun 13 16:07:38 2022
 
 # Variables
 
@@ -95,7 +95,7 @@ MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-PATH = /home/donening/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/d/ProgramData/Miniconda3:/mnt/d/ProgramData/Miniconda3/Library/mingw-w64/bin:/mnt/d/ProgramData/Miniconda3/Library/usr/bin:/mnt/d/ProgramData/Miniconda3/Library/bin:/mnt/d/ProgramData/Miniconda3/Scripts:/mnt/d/Program Files/VMware/VMware Workstation/bin/:/mnt/d/Program Files (x86)/NetSarang/Xftp 6/:/mnt/d/Program Files (x86)/NetSarang/Xshell 6/:/mnt/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Microsoft SQL Server/130/Tools/Binn/:/mnt/d/Program Files/mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/bin:/mnt/d/Program Files/CMake/bin:/mnt/c/Program Files/Microsoft VS Code/bin:/mnt/d/Program Files/MATLAB/R2018a/runtime/win64:/mnt/d/Program Files/MATLAB/R2018a/bin:/mnt/c/Program Files/Pandoc/:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/Program Files/Microsoft VS Code:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1/extras/CUPTI/lib64:/mnt/d/Program Files/Git/cmd:/mnt/d/Program Files/apache-maven-3.8.3/bin:/mnt/d/Program Files/Scoop/shims:/mnt/c/Program Files/NVIDIA Corporation/Nsight Compute 2020.2.0/:/mnt/d/LxRunOffline:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/MySQL/MySQL Server 8.0/bin:/mnt/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.1/bin:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.1/libnvvp:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/d/Program Files/ffmpeg-4.3.1-win64-shared/bin:/mnt/d/Program Files/LLVM/bin:/mnt/d/Java/OpenJDK/jdk-17.0.1/bin:/mnt/d/Program Files (x86)/Calibre2/:/mnt/d/Program Files/Graphviz/bin:/mnt/d/texlive/2022/bin/win32:/mnt/d/Program Files/Vim/vim82:/mnt/d/Program Files/Go/bin:/mnt/c/Program Files (x86)/dotnet/:/mnt/d/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64:/mnt/c/Program Files/PowerShell/7/:/mnt/d/Program Files/nodejs/:/mnt/d/nodejs/node_global:/mnt/c/Program Files/MySQL/MySQL Shell 8.0/bin/:/mnt/d/Program Files/Scoop/shims:/mnt/c/Users/donening/AppData/Local/Microsoft/WindowsApps:/mnt/d/Program Files (x86)/bandzip/:/mnt/c/Users/donening/AppData/Roaming/Python/Python38/Scripts:/mnt/d/Program Files/JetBrains/PyCharm Community Edition 2020.1.4/bin:/mnt/d/modeltech64_2019.2/win64:/mnt/c/Users/donening/.dotnet/tools:/mnt/c/Users/donening/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/donening/go/bin:/mnt/d/Program Files/JetBrains/IntelliJ IDEA Community Edition 2022.1.1/bin:/mnt/d/Program Files/JetBrains/PyCharm Community Edition 2022.1.1/bin:/mnt/c/Users/donening/AppData/Roaming/npm
+PATH = /home/donening/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/d/ProgramData/Miniconda3:/mnt/d/ProgramData/Miniconda3/Library/mingw-w64/bin:/mnt/d/ProgramData/Miniconda3/Library/usr/bin:/mnt/d/ProgramData/Miniconda3/Library/bin:/mnt/d/ProgramData/Miniconda3/Scripts:/mnt/d/Program Files/VMware/VMware Workstation/bin/:/mnt/d/Program Files (x86)/NetSarang/Xftp 6/:/mnt/d/Program Files (x86)/NetSarang/Xshell 6/:/mnt/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Microsoft SQL Server/130/Tools/Binn/:/mnt/d/Program Files/mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/bin:/mnt/d/Program Files/CMake/bin:/mnt/c/Program Files/Microsoft VS Code/bin:/mnt/d/Program Files/MATLAB/R2018a/runtime/win64:/mnt/d/Program Files/MATLAB/R2018a/bin:/mnt/c/Program Files/Pandoc/:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/Program Files/Microsoft VS Code:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1/extras/CUPTI/lib64:/mnt/d/Program Files/Git/cmd:/mnt/d/Program Files/apache-maven-3.8.3/bin:/mnt/d/Program Files/Scoop/shims:/mnt/c/Program Files/NVIDIA Corporation/Nsight Compute 2020.2.0/:/mnt/d/LxRunOffline:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/MySQL/MySQL Server 8.0/bin:/mnt/c/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.1/bin:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.1/libnvvp:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/d/Program Files/ffmpeg-4.3.1-win64-shared/bin:/mnt/d/Program Files/LLVM/bin:/mnt/d/Java/OpenJDK/jdk-17.0.1/bin:/mnt/d/Program Files (x86)/Calibre2/:/mnt/d/Program Files/Graphviz/bin:/mnt/d/texlive/2022/bin/win32:/mnt/d/Program Files/Vim/vim82:/mnt/d/Program Files/Go/bin:/mnt/c/Program Files (x86)/dotnet/:/mnt/d/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64:/mnt/c/Program Files/PowerShell/7/:/mnt/d/Program Files/nodejs/:/mnt/d/nodejs/node_global:/mnt/c/Users/donening/.cargo/bin:/mnt/c/Program Files/MySQL/MySQL Shell 8.0/bin/:/mnt/d/Program Files/Scoop/shims:/mnt/c/Users/donening/AppData/Local/Microsoft/WindowsApps:/mnt/d/Program Files (x86)/bandzip/:/mnt/c/Users/donening/AppData/Roaming/Python/Python38/Scripts:/mnt/d/Program Files/JetBrains/PyCharm Community Edition 2020.1.4/bin:/mnt/d/modeltech64_2019.2/win64:/mnt/c/Users/donening/.dotnet/tools:/mnt/c/Users/donening/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/donening/go/bin:/mnt/d/Program Files/JetBrains/IntelliJ IDEA Community Edition 2022.1.1/bin:/mnt/d/Program Files/JetBrains/PyCharm Community Edition 2022.1.1/bin:/mnt/c/Users/donening/AppData/Roaming/npm
 # default
 MAKEFILES := 
 # automatic
@@ -141,7 +141,7 @@ XDG_RUNTIME_DIR = /mnt/wslg/runtime-dir
 # makefile (from 'Makefile', line 2)
 CFLAGS := -Wall -Wextra -std=c++11 -g
 # environment
-VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-4d986669-3cc8-415e-bfa3-8669fecfc2cf.sock
+VSCODE_IPC_HOOK_CLI = /mnt/wslg/runtime-dir/vscode-ipc-3cedf706-de4a-4e5d-84d7-a8870df701e0.sock
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -171,9 +171,9 @@ CC := g++
 
 # Directories
 
-# . (device 2080, inode 147752): 9 files, no impossibilities.
+# . (device 2080, inode 147752): 10 files, no impossibilities.
 
-# 9 files, no impossibilities in 1 directories.
+# 10 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -273,10 +273,10 @@ all: complier
 #  Command line target.
 #  Implicit rule search has not been done.
 #  File does not exist.
+ 
 #  File has been updated.
 #  Needs to be updated (-q is set).
 # variable set hash-table stats:
- 
 # Load=0/32=0%, Rehash=0, Collisions=0/3=0%
 
 run:
@@ -364,12 +364,12 @@ mytest:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 33 / storage = 239 B / avg = 7 B
-# current buf: size = 8162 B / used = 239 B / count = 33 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 34 / storage = 248 B / avg = 7 B
+# current buf: size = 8162 B / used = 248 B / count = 34 / avg = 7 B
 
-# strcache performance: lookups = 57 / hit rate = 42%
+# strcache performance: lookups = 58 / hit rate = 41%
 # hash-table stats:
-# Load=33/8192=0%, Rehash=0, Collisions=0/57=0%
-# Finished Make data base on Sun Jun 12 14:37:01 2022
+# Load=34/8192=0%, Rehash=0, Collisions=0/58=0%
+# Finished Make data base on Mon Jun 13 16:07:38 2022
 
  

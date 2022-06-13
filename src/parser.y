@@ -242,12 +242,6 @@ decl
 : varDecl {$$ = $1;}
 ;
 
-// 数组初始化值
-ArrayInitVal
-: literalConst {$$ = new TreeNode(lineno, NODE_VARLIST); $$->addChild($1);}
-| ArrayInitVal COMMA literalConst {$$ = $1; $$->addChild($3);}
-;
-
 varDecl
 : basicType varDefs SEMICOLON {
   $$ = new TreeNode(lineno, NODE_STMT);
@@ -280,18 +274,6 @@ varDefs
 
 varDef
 : declCompIdentifier {$$ = $1;}
-| declCompIdentifier ASSIGN expr {
-	$$ = new TreeNode(lineno, NODE_OP);
-	$$->optype = OP_DECLASSIGN;
-	$$->addChild($1);
-	$$->addChild($3);
-  }
-| arrayDeclIdentifier ASSIGN LBRACE ArrayInitVal RBRACE {
-	$$ = new TreeNode(lineno, NODE_OP);
-	$$->optype = OP_DECLASSIGN;
-	$$->addChild($1);
-	$$->addChild($4);
-  }
 ;
 
 // ---------------- 函数声明 -------------------

@@ -142,4 +142,11 @@ static TreeNode *nodePrintf = new TreeNode(0, NODE_VAR);
 
 extern bool typeError;
 
+class Function
+{
+public:
+    string func_code;
+    map<string,int> var_to_tmpvar;
+    string return_var;
+};
 #endif

@@ -9,6 +9,7 @@ using std::string;
 using std::list;
 using std::map;
 using std::stack;
+using std::iterator;
 using std::unordered_map;
 #define YYSTYPE TreeNode *
 
