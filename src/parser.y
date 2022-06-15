@@ -42,7 +42,7 @@
 %token SEMICOLON COMMA LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
 
 // 关键字
-%token CONST IF_ ELSE WHILE_ FOR_ BREAK CONTINUE RETURN
+%token CONST IF_ ELSE WHILE_ BREAK CONTINUE RETURN
 
 // 比较运算符
 %token EQ GRAEQ LESEQ NEQ  GRA LES
@@ -402,41 +402,6 @@ stmt
 		cout << "# $ reduce WHILE at scope : " << presentScope << ", at line " << lineno << endl;
 	#endif
   }
-| FOR LPAREN basicType varDefs SEMICOLON cond SEMICOLON expr RPAREN stmt_ {
-	$$ = new TreeNode(lineno, NODE_STMT);
-	$$->stype = STMT_FOR;
-	TreeNode* forDecl = new TreeNode(lineno, NODE_STMT);
-	forDecl->stype = STMT_DECL;
-	forDecl->addChild($3);
-	TreeNode* p = $4->child;
-	while (p) {
-		if (p->nodeType == NODE_OP) {
-			p->child->type->copy($3->type);
-		}
-		else {
-			p->type->copy($3->type);
-		}
-		p = p->sibling;
-	}
-	forDecl->addChild($4);
-	$$->addChild(forDecl);
-	$$->addChild($6);
-	$$->addChild($8);
-	$$->addChild($10);
-	inCycle = false;
-	scopePop();
-  }
-| FOR LPAREN expr SEMICOLON cond SEMICOLON expr RPAREN stmt_ {
-	$$ = new TreeNode(lineno, NODE_STMT);
-	$$->stype = STMT_FOR;
-	$$->addChild($3);
-	$$->addChild($5);
-	$$->addChild($7);
-	$$->addChild($9);
-	inCycle = false;
-	scopePop();
-  }
-
 | BREAK SEMICOLON {
 	if (!inCycle) {
 		yyerror("break statement outside loop");
@@ -459,7 +424,6 @@ stmt
 
 IF : IF_ {scopePush();};
 WHILE : WHILE_ {inCycle = true; scopePush();};
-FOR : FOR_ {inCycle = true; scopePush();};
 
 // ---------------- 表达式 -------------------
 

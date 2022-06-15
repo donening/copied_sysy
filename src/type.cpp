@@ -35,7 +35,7 @@ string Type::getTypeInfo() {
 string Type::getTypeInfo(ValueType type) {
     switch(type) {
         case VALUE_INT:
-            return "int";
+            return "i32";
         case VALUE_ARRAY:
             if (this->dim > 0) {
                 string buf = getTypeInfo(this->elementType);

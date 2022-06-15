@@ -87,16 +87,15 @@ public:
     StmtType stype;      // 表达式类型
     Type *type;          // 变量、类型、表达式结点，有类型。
     int int_val;         // int变量值
-    string str_val;
-    string var_name;
-    string var_scope; // 变量作用域标识符
-    int pointLevel;
+    string var_name;     // 变量名
+    string var_scope;    // 变量作用域标识符，当该值为1时，变量为全局变量
+    int pointLevel;      // 记录指针级别，判断是何种类型指针
 
-    TreeNode(int lineno, NodeType type);
-    TreeNode(TreeNode *node); // 仅用于叶节点拷贝，函数不复制子节点，也不复制子节点指针
-    void addChild(TreeNode *);
-    void addSibling(TreeNode *);
-    int getChildNum();
+    TreeNode(int lineno, NodeType type); //在lexer中的新建节点方法，可以记录所在行，便于后续错误处理
+    TreeNode(TreeNode *node);            // 仅用于叶节点拷贝，函数不复制子节点，也不复制子节点指针
+    void addChild(TreeNode *);           //增加子节点
+    void addSibling(TreeNode *);         //增加姐妹节点
+    int getChildNum();                   //获取子节点数目
     int getVal();
 
     int nodeID;
@@ -146,7 +145,14 @@ class Function
 {
 public:
     string func_code;
-    map<string,int> var_to_tmpvar;
+    int tmp_var_label = 0;
+    TreeNode *function_node;
     string return_var;
+    string Ask_tmp_var();
+    Function(TreeNode *p)
+    {
+        this->function_node = p;
+        this->tmp_var_label = 0;
+    }
 };
 #endif

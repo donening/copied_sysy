@@ -68,7 +68,6 @@ IDENTIFIER [[:alpha:]_][[:alpha:][:digit:]_]*
 "if" return IF_;
 "else" return ELSE;
 "while" return WHILE_;
-"for" return FOR_;
 "break" return BREAK;
 "continue" return CONTINUE;
 "return" return RETURN;

@@ -1,11 +1,13 @@
 #include "tree.h"
 
 // -------------------------------------------------------------
-// ------------------------- 常量字符串 -------------------------
+// ------------------------ 变量生成方法 -------------------------
 // -------------------------------------------------------------
 
-string _ident = "\"LuczyCompiler: (Ubuntu 1.0.0ubuntu1~18.04) 1.0.0\"";
-string _section = ".note.GNU-stack,\"\",@progbits";
+// 1.全局变量：由program节点调用gen_var_decl函数进行声明
+// 2.局部变量：所有对于局部变量的引用使用%l+作用域+变量名进行生成和使用
+// 3.临时变量：标号由每个Function进行管理，由Function类中的Ask_tmp_var方法进行生成和管理
+// 4.变量传递：使用栈gen_var_label_stack在节点间传递变量标号
 
 // --------------------------------------------------------------
 // --------------------- 工具函数 重载运算符 ----------------------
@@ -33,15 +35,14 @@ map<pair<string, string>, TreeNode *> idList;
 // map <函数名， 返回类型> 函数名列表
 map<string, Type *> FuncList;
 // stack <函数类> 当前所在函数对应的函数类，临时变量标号等以函数为单位生成
-
-// map <字符串， 标签序列号> 字符串表
-map<string, int> strList;
-
-// map <作用域+变量名， 变量相对于ebp偏移量> 局部变量表，在每次函数定义前清空
-// <"11a", "-12"> 表示第一个函数的栈上第一个分配的局部变量（前3个4字节为bx,cx,dx备份用，始终保留）
-map<string, int> LocalVarList;
-// 栈上为局部变量分配的空间总大小，在return时进行清理
-int stackSize;
+stack<Function *> func_stack;
+/**
+ * 生成的临时标号管理栈，在子节点push，在父节点pop，每次应当只处理一个临时变量
+ * 在push时应当push形如%[gtl][name]的字符串
+ */
+stack<string> gen_var_label_stack;
+// map <作用域+变量名， 节点指针> 局部变量表，在每次函数定义前清空
+map<string, TreeNode *> LocalVarList;
 
 // 当前所处函数的声明结点指针，return使用
 TreeNode *pFunction;
@@ -69,7 +70,6 @@ TreeNode::TreeNode(TreeNode *node)
     this->stype = node->stype;
     this->type = node->type;
     this->int_val = node->int_val;
-    this->str_val = node->str_val;
     this->var_name = node->var_name;
     this->var_scope = node->var_scope;
     this->pointLevel = node->pointLevel;
@@ -136,7 +136,7 @@ void TreeNode::genNodeId()
 
 void TreeNode::genCode()
 {
-    TreeNode *p = child;
+    TreeNode *p = this->child; // p = this->child
     TreeNode **q;
     int N = 0, n = 1, pSize = 0;
     string varCode = "";
@@ -154,22 +154,16 @@ void TreeNode::genCode()
     case NODE_FUNCALL:
     { // 生成参数
         N = p->sibling->getChildNum();
-        auto tmp_var_lists = new vector<string>(N);
 #ifdef childNumdebug
         cout << "# ChildNum = " << N << endl;
 #endif
-        q = new TreeNode *[N];
-        p = p->sibling->child;
-        while (p)
-        {
-            q[N - n++] = p;
-            p = p->sibling;
-        }
-        // 从右向左压栈
+        vector<string> var_list;
         for (int i = 0; i < N; i++)
         {
-            q[i]->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            p->genCode();
+            p = p->sibling;
+            var_list.push_back(gen_var_label_stack.top());
+            gen_var_label_stack.pop();
             pSize += this->child->type->paramType[i]->getSize();
         }
         auto it = FuncList.find(child->var_name);
@@ -183,39 +177,68 @@ void TreeNode::genCode()
         {
             cycleStackTop = -1;
             pFunction = this;
-            get_label();
-            cout << "\t.globl\t" << p->sibling->var_name << endl
-                 << "\t.type\t" << p->sibling->var_name << ", @function" << endl
-                 << p->sibling->var_name << ":" << endl;
-            gen_var_decl();
-            cout << "\tpushl\t%ebp" << endl
-                 << "\tmovl\t%esp, %ebp" << endl;
-            // 在栈上分配局部变量
-            cout << "\tsubl\t$" << -stackSize << ", %esp" << endl;
+            auto type = this->child->type;
+            auto func_new = new Function(this);
+            func_new->return_var = type->type == VALUE_INT ? "%t" + this->child->sibling->var_name + "_return" : "";
+            func_stack.push(func_new);
+            // 生成返回标签
+            this->get_label();
+            // 生成局部变量定义表
+            this->gen_var_decl();
+            // 确定返回值类型
+            string print_return_type = type->type == VALUE_INT ? "i32 @" : "void @";
+            // 生成函数声明头
+            cout << "declare " << print_return_type << this->child->sibling->var_name;
+            // 生成参数列表
+            cout << "(";
+            for (auto iter_def_var = LocalVarList.begin(); iter_def_var->second->nodeType == NODE_PARAM; iter_def_var++)
+            {
+                if (iter_def_var != LocalVarList.begin())
+                    cout << ", ";
+                string labels = iter_def_var->first;
+                cout << iter_def_var->second->type->getTypeInfo() << " %t"
+                     << "tmp" << labels;
+            }
+            cout << "){" << endl;
+            // 生成参数declare语句
+            for (auto iter_def_var = LocalVarList.begin(); iter_def_var != LocalVarList.end(); iter_def_var++)
+            {
+                cout << "\tdeclare " << iter_def_var->second->type->getTypeInfo();
+                cout << " %l" << iter_def_var->first;
+                if (iter_def_var->second->type->dim != 0)
+                {
+                    for (unsigned int i = 0; i < iter_def_var->second->type->dim; i++)
+                        cout << "[" << iter_def_var->second->type->dimSize[i] << "]";
+                }
+            }
+            // 生成函数参数初始化语句
+            for (auto iter_def_var = LocalVarList.begin(); iter_def_var->second->nodeType == NODE_PARAM; iter_def_var++)
+            {
+                cout << "\t%l" << iter_def_var->first << " = "
+                     << "%ttmp" << iter_def_var->first;
+            }
             // 内部代码递归生成
             p->sibling->sibling->sibling->genCode();
             // 产生返回标签代码
             cout << this->label.next_label << ":" << endl;
-            // 清理局部变量栈空间
-            cout << "\taddl\t$" << -stackSize << ", %esp" << endl;
-            cout << "\tpopl\t%ebp" << endl
-                 << "\tret" << endl;
+            cout << " exit " << func_stack.top()->return_var << endl;
+            cout << "}" << endl;
+            func_stack.pop();
             pFunction = nullptr;
         }
         break;
         case STMT_DECL:
-        case STMT_CONSTDECL:
-            p = p->sibling->child;
-            while (p)
-            {
-                if (p->nodeType == NODE_OP)
-                {
-                    p->child->sibling->genCode();
-                    // 这里也很蠢，可以通过三地址码优化一下
-                    cout << "\tmovl\t%eax, " << LocalVarList[p->child->var_scope + p->child->var_name] << "(%ebp)" << endl;
-                }
-                p = p->sibling;
-            }
+            // p = p->sibling->child;
+            // while (p)
+            // {
+            //     if (p->nodeType == NODE_OP)
+            //     {
+            //         p->child->sibling->genCode();
+            //         // 这里也很蠢，可以通过三地址码优化一下
+            //         cout << "\tmovl\t%eax, " << LocalVarList[p->child->var_scope + p->child->var_name] << "(%ebp)" << endl;
+            //     }
+            //     p = p->sibling;
+            // }
             break;
         case STMT_IF:
             get_label();
@@ -231,7 +254,7 @@ void TreeNode::genCode()
             this->child->genCode();
             cout << label.true_label << ":" << endl;
             this->child->sibling->genCode();
-            cout << "\tbr\t\t" << label.next_label << endl;
+            cout << "\tbr " << label.next_label << endl;
             cout << label.false_label << ":" << endl;
             this->child->sibling->sibling->genCode();
             cout << label.next_label << ":" << endl;
@@ -243,36 +266,22 @@ void TreeNode::genCode()
             this->child->genCode();
             cout << label.true_label << ":" << endl;
             this->child->sibling->genCode();
-            cout << "\tbr\t\t" << label.next_label << endl;
-            cout << label.false_label << ":" << endl;
-            cycleStackTop--;
-            break;
-        case STMT_FOR:
-            get_label();
-            cycleStack[++cycleStackTop] = this;
-            this->child->genCode();
-            cout << label.begin_label << ":" << endl;
-            this->child->sibling->genCode();
-            cout << label.true_label << ":" << endl;
-            this->child->sibling->sibling->sibling->genCode();
-            cout << label.next_label << ":" << endl;
-            this->child->sibling->sibling->genCode();
-            cout << "\tbr\t\t" << label.begin_label << endl;
+            cout << "\tbr " << label.next_label << endl;
             cout << label.false_label << ":" << endl;
             cycleStackTop--;
             break;
         case STMT_BREAK:
-            cout << "\tbr\t\t" << cycleStack[cycleStackTop]->label.false_label << endl;
+            cout << "\tbr " << cycleStack[cycleStackTop]->label.false_label << endl;
             break;
         case STMT_CONTINUE:
-            cout << "\tbr\t\t" << cycleStack[cycleStackTop]->label.next_label << endl;
+            cout << "\tbr " << cycleStack[cycleStackTop]->label.next_label << endl;
             break;
         case STMT_RETURN:
             if (p)
             {
                 p->genCode();
             }
-            cout << "\tbr\t\t" << pFunction->label.next_label << endl;
+            cout << "\tbr " << pFunction->label.next_label << endl;
             break;
         case STMT_BLOCK:
             while (p)
@@ -291,7 +300,7 @@ void TreeNode::genCode()
             // 内存变量（全局/局部）
             string varCode = getVarNameCode(this->child);
             if (child->pointLevel == 0)
-                cout << "\tmovl\t" << varCode << ", %eax" << endl;
+                cout << "%g" << varCode;
             else if (child->pointLevel < 0)
             { // &前缀的变量
                 cout << "\tleal\t" << varCode << ", %eax" << endl;
@@ -446,15 +455,14 @@ void TreeNode::genCode()
                  << "\tmovl\t%eax, " << varCode << endl;
             break;
         case OP_DIVASSIGN:
-            varCode = getVarNameCode(p);
+        {
+            string var_name = getVarNameCode(p);
             p->sibling->genCode();
-            cout << "\tmovl\t%eax, %ebx" << varCode << endl
-                 << "\tmovl\t" << varCode << ", %eax" << endl
-                 << "\tcltd" << endl
-                 << "\tidivl\t%ebx" << endl
-                 << "\tmovl\t%eax, " << varCode << endl;
-            break;
-        case OP_DECLASSIGN:
+            string target = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            cout << "\t%l" << var_name << " = " << target << endl;
+        }
+        break;
         case OP_ASSIGN:
             p->sibling->genCode();
             if (p->nodeType == NODE_VAR)
@@ -470,62 +478,87 @@ void TreeNode::genCode()
             break;
         case OP_INC:
             varCode = getVarNameCode(p);
-            cout << "\tmovl\t" << varCode << ", %eax" << endl
-                 << "\tincl\t" << varCode << endl;
+            cout << "\t%l" << varCode << " = %l" << varCode << " + 1" << endl;
             break;
         case OP_DEC:
             varCode = getVarNameCode(p);
-            cout << "\tmovl\t" << varCode << ", %eax" << endl
-                 << "\tdecl\t" << varCode << endl;
+            cout << "\t%l" << varCode << " = %l" << varCode << " - 1" << endl;
             break;
         case OP_ADD:
+        {
             p->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            string a = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
             p->sibling->genCode();
-            cout << "\tpopl\t%ebx" << endl;
-            cout << "\taddl\t%ebx, %eax" << endl;
-            break;
+            string b = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            string tmp_var_label = func_stack.top()->Ask_tmp_var();
+            cout << "\t" << tmp_var_label << " = add " << a << " " << b << endl;
+            gen_var_label_stack.push(tmp_var_label);
+        }
+        break;
         case OP_SUB:
+        {
             p->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            string a = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
             p->sibling->genCode();
-            cout << "\tmovl\t%eax, %ebx" << endl
-                 << "\tpopl\t%eax" << endl
-                 << "\tsubl\t%ebx, %eax" << endl;
-            break;
+            string b = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            string tmp_var_label = func_stack.top()->Ask_tmp_var();
+            cout << "\t" << tmp_var_label << " = sub " << a << " " << b << endl;
+            gen_var_label_stack.push(tmp_var_label);
+        }
+        break;
         case OP_POS:
             p->genCode();
             break;
         case OP_NAG:
+        {
             p->genCode();
+            string neg = gen_var_label_stack.top();
             cout << "\tnegl\t%eax" << endl;
-            break;
+        }
+        break;
         case OP_MUL:
+        {
             p->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            string a = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
             p->sibling->genCode();
-            cout << "\tpopl\t%ebx" << endl;
-            cout << "\timull\t%ebx, %eax" << endl;
-            break;
+            string b = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            string tmp_var_label = func_stack.top()->Ask_tmp_var();
+            cout << "\t" << tmp_var_label << " = mul " << a << " " << b << endl;
+            gen_var_label_stack.push(tmp_var_label);
+        }
+        break;
         case OP_DIV:
+        {
             p->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            string a = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
             p->sibling->genCode();
-            cout << "\tmovl\t%eax, %ebx" << endl
-                 << "\tpopl\t%eax" << endl
-                 << "\tcltd" << endl
-                 << "\tidivl\t%ebx" << endl;
-            break;
+            string b = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            string tmp_var_label = func_stack.top()->Ask_tmp_var();
+            cout << "\t" << tmp_var_label << " = div " << a << " " << b << endl;
+            gen_var_label_stack.push(tmp_var_label);
+        }
+        break;
         case OP_MOD:
+        {
             p->genCode();
-            cout << "\tpushl\t%eax" << endl;
+            string a = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
             p->sibling->genCode();
-            cout << "\tmovl\t%eax, %ebx" << endl
-                 << "\tpopl\t%eax" << endl
-                 << "\tcltd" << endl
-                 << "\tidivl\t%ebx" << endl
-                 << "\tmovl\t%edx, %eax" << endl;
-            break;
+            string b = gen_var_label_stack.top();
+            gen_var_label_stack.pop();
+            string tmp_var_label = func_stack.top()->Ask_tmp_var();
+            cout << "\t" << tmp_var_label << " = mod " << a << " " << b << endl;
+            gen_var_label_stack.push(tmp_var_label);
+        }
+        break;
         case OP_INDEX:
             // 这里只生成下标运算在右值时的代码（即按下标取数值）
             p->sibling->genCode();
@@ -556,10 +589,6 @@ void TreeNode::gen_var_decl()
                 while (q)
                 {
                     TreeNode *t = q;
-                    if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN)
-                    {
-                        t = q->child;
-                    }
                     cout << "declare i32 @" << t->var_name;
                     if (t->type->dim != 0)
                     {
@@ -577,18 +606,15 @@ void TreeNode::gen_var_decl()
     {
         // 对于函数声明语句，递归查找局部变量声明
         LocalVarList.clear();
-        stackSize = -12;
-        int paramSize = 8;
 #ifdef varDeclDebug
         cout << "# gen_var_decl in funcDecl init" << endl;
 #endif
         // 遍历参数定义列表
-        TreeNode *p = child->sibling->sibling->child;
+        TreeNode *p = this->child->sibling->sibling->child;
         while (p)
         {
             // 只能是基本数据类型，简便起见一律分配4字节
-            LocalVarList[p->child->sibling->var_scope + p->child->sibling->var_name] = paramSize;
-            paramSize += 4;
+            LocalVarList[p->child->sibling->var_scope + p->child->sibling->var_name] = p;
             p = p->sibling;
         }
 #ifdef varDeclDebug
@@ -618,16 +644,11 @@ void TreeNode::gen_var_decl()
             // q为标识符或声明赋值运算符
             TreeNode *t = q;
             // 声明时赋值
-            if (q->nodeType == NODE_OP && q->optype == OP_DECLASSIGN)
-                t = q->child;
-            int varsize = ((t->type->pointLevel == 0) ? t->type->getSize() : 4);
             if (t->type->dim > 0)
             {
                 t->type->type = VALUE_ARRAY;
-                varsize = t->type->getSize();
             }
-            LocalVarList[t->var_scope + t->var_name] = stackSize;
-            stackSize -= varsize;
+            LocalVarList[t->var_scope + t->var_name] = t;
             q = q->sibling;
         }
     }
@@ -686,14 +707,6 @@ void TreeNode::get_label()
             this->child->label.true_label = this->label.true_label;
             this->child->label.false_label = this->label.false_label;
             break;
-        case STMT_FOR:
-            this->label.begin_label = new_label();
-            this->label.true_label = new_label();
-            this->label.false_label = new_label();
-            this->label.next_label = new_label();
-            this->child->sibling->label.true_label = this->label.true_label;
-            this->child->sibling->label.false_label = this->label.false_label;
-            break;
         default:
             break;
         }
@@ -738,8 +751,7 @@ string TreeNode::getVarNameCode(TreeNode *p)
         else
         {
             // 局部变量（不要跨定义域访问）
-            varCode += LocalVarList[p->var_scope + p->var_name];
-            varCode += "(%ebp)";
+            varCode = p->var_scope + p->var_name;
         }
     }
     else
@@ -751,7 +763,7 @@ string TreeNode::getVarNameCode(TreeNode *p)
         }
         else
         {
-            varCode += LocalVarList[p->child->var_scope + p->child->var_name];
+            varCode += LocalVarList[p->child->var_scope + p->child->var_name]->var_name;
             varCode += "(%ebp,%eax,4)";
         }
     }
@@ -911,8 +923,6 @@ string TreeNode::opType2String(OperatorType type)
         return "less equal";
     case OP_ASSIGN:
         return "assign";
-    case OP_DECLASSIGN:
-        return "assign(decl)";
     case OP_ADDASSIGN:
         return "add assign";
     case OP_SUBASSIGN:
@@ -971,4 +981,9 @@ void TreeNode::printConstVal()
             break;
         }
     }
+}
+// 直接生成%t[name]格式的临时变量字符串
+string Function::Ask_tmp_var()
+{
+    return "%t" + to_string(this->tmp_var_label++);
 }
