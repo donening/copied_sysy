@@ -11,9 +11,11 @@ using std::map;
 using std::stack;
 using std::iterator;
 using std::unordered_map;
+using std::fstream;
+using std::stringstream;
 #define YYSTYPE TreeNode *
 
 #include "./tree.h"
 #include "./parser.h"
-
+#include <sstream>
 #endif
