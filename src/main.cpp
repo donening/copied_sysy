@@ -5,6 +5,7 @@ extern TreeNode *root;
 extern FILE *yyin;
 extern int yyparse();
 extern stringstream finalstream;
+extern multimap<string, string> idNameList;
 bool parserError = false;
 bool typeError = false;
 
@@ -49,8 +50,15 @@ int main(int argc, char *argv[])
     while (getline(finalstream, s))
     {
         f << s << endl;
-        cout << s << endl;
     }
     f.close();
+    root->printAST();
+    cout << "变量表" << endl;
+    auto var_it = idNameList.begin();
+    while (var_it != idNameList.end())
+    {
+        cout << "id: " << var_it->first << "\tscope:" << var_it->second << endl;
+        var_it++;
+    }
     return 0;
 }

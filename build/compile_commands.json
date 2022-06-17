@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/donening/Workspace/copied_sysy/build",
+  "command": "/usr/bin/g++   -g -o CMakeFiles/sysy_compiler.dir/main.cpp.o -c /home/donening/Workspace/copied_sysy/main.cpp",
+  "file": "/home/donening/Workspace/copied_sysy/main.cpp"
+}
+]

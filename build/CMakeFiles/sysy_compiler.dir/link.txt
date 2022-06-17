@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -rdynamic CMakeFiles/sysy_compiler.dir/main.cpp.o -o sysy_compiler 

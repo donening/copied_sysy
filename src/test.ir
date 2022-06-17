@@ -1,0 +1,16 @@
+declare i32 @g1a
+define i32 @main(){
+	declare i32 %lmainreturn
+	declare i32 %l11b
+	declare i32 %l11c
+	declare i32 %t0
+	entry
+	%l11b = 12
+	%t0 = neg 1
+	%l11c = %t0
+	@g1a = 0
+	%lmainreturn = @g1a
+	br .LRET_main
+.LRET_main:
+	exit %lmainreturn
+}

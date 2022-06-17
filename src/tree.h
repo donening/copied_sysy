@@ -148,7 +148,7 @@ public:
     int tmp_var_label = 0;
     TreeNode *function_node;
     string return_var;
-    string Ask_tmp_var();
+    string Ask_tmp_var(bool);
     Function(TreeNode *p)
     {
         this->function_node = p;
